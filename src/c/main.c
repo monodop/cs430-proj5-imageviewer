@@ -4,6 +4,7 @@
 
 #include "../headers/vertex.h"
 #include "../headers/shaders.h"
+#include "../../resource.h"
 
 GLFWwindow* window;
 
@@ -18,24 +19,6 @@ const GLubyte Indices[] = {
 	0, 1, 2,
 	2, 3, 0
 };
-
-char* vertex_shader_src =
-"attribute vec4 Position;\n"
-"attribute vec4 SourceColor;\n"
-"\n"
-"varying vec4 DestinationColor;\n"
-"\n"
-"void main(void) {\n"
-"    DestinationColor = SourceColor;\n"
-"    gl_Position = Position;\n"
-"}\n";
-
-char* fragment_shader_src =
-"varying lowp vec4 DestinationColor;\n"
-"\n"
-"void main(void) {\n"
-"    gl_FragColor = DestinationColor;\n"
-"}\n";
 
 static void error_callback(int error, const char* description) {
 	fputs(description, stderr);
@@ -74,7 +57,7 @@ int main(void) {
 
 	glfwMakeContextCurrent(window);
 
-	program_id = shader_create_program(vertex_shader_src, fragment_shader_src);
+	program_id = shader_create_program(RES_VERTEX_SHADER, RES_FRAGMENT_SHADER);
 
 	glUseProgram(program_id);
 

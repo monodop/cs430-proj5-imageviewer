@@ -118,6 +118,7 @@
   <ItemGroup>
     <ClCompile Include="src\c\color.c" />
     <ClCompile Include="src\c\main.c" />
+    <ClCompile Include="src\c\res_manager.c" />
     <ClCompile Include="src\c\shaders.c" />
   </ItemGroup>
   <ItemGroup>
@@ -125,6 +126,8 @@
     <None Include="glfw3.dll" />
     <None Include="libEGL.dll" />
     <None Include="libGLESv2.dll" />
+    <None Include="src\shaders\fragment.glsl" />
+    <None Include="src\shaders\vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="glfw3.lib" />
@@ -133,10 +136,15 @@
     <Library Include="libGLESv2.lib" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\headers\color.h" />
+    <ClInclude Include="src\headers\res_manager.h" />
     <ClInclude Include="src\headers\shaders.h" />
     <ClInclude Include="src\headers\vec.h" />
     <ClInclude Include="src\headers\vertex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

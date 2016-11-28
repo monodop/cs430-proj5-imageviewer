@@ -1,5 +1,8 @@
 
 #include "../headers/shaders.h"
+#include "../headers/res_manager.h"
+#include <string.h>
+#include <stdio.h>
 
 GLint shader_create_shader(GLint shader_type, char* shader_src) {
 
@@ -24,9 +27,13 @@ GLint shader_create_shader(GLint shader_type, char* shader_src) {
 }
 
 
-GLint shader_create_program(char* vertex_shader_src, char* fragment_shader_src) {
+GLint shader_create_program(int vertex_shader_res, int fragment_shader_res) {
+
+	char* vertex_shader_src = load_resource(vertex_shader_res, "SHADER");
+	char* fragment_shader_src = load_resource(fragment_shader_res, "SHADER");
 
 	GLint link_success = 0;
+
 
 	GLint program_id = glCreateProgram();
 	GLint vertex_shader = shader_create_shader(GL_VERTEX_SHADER, vertex_shader_src);
