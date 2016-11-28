@@ -3,10 +3,7 @@
 #include <stdio.h>
 
 #include "../headers/vertex.h"
-
-#define GL_GLEXT_PROTOTYPES
-#include <GLES2/gl2.h>
-#include <GLFW/glfw3.h>
+#include "../headers/shaders.h"
 
 GLFWwindow* window;
 
@@ -39,55 +36,6 @@ char* fragment_shader_src =
 "void main(void) {\n"
 "    gl_FragColor = DestinationColor;\n"
 "}\n";
-
-GLint simple_shader(GLint shader_type, char* shader_src) {
-
-	GLint compile_success = 0;
-
-	int shader_id = glCreateShader(shader_type);
-
-	glShaderSource(shader_id, 1, &shader_src, 0);
-
-	glCompileShader(shader_id);
-
-	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &compile_success);
-
-	if (compile_success == GL_FALSE) {
-		GLchar message[256];
-		glGetShaderInfoLog(shader_id, sizeof(message), 0, &message[0]);
-		printf("glCompileShader Error: %s\n", message);
-		exit(1);
-	}
-
-	return shader_id;
-}
-
-
-int simple_program() {
-
-	GLint link_success = 0;
-
-	GLint program_id = glCreateProgram();
-	GLint vertex_shader = simple_shader(GL_VERTEX_SHADER, vertex_shader_src);
-	GLint fragment_shader = simple_shader(GL_FRAGMENT_SHADER, fragment_shader_src);
-
-	glAttachShader(program_id, vertex_shader);
-	glAttachShader(program_id, fragment_shader);
-
-	glLinkProgram(program_id);
-
-	glGetProgramiv(program_id, GL_LINK_STATUS, &link_success);
-
-	if (link_success == GL_FALSE) {
-		GLchar message[256];
-		glGetProgramInfoLog(program_id, sizeof(message), 0, &message[0]);
-		printf("glLinkProgram Error: %s\n", message);
-		exit(1);
-	}
-
-	return program_id;
-}
-
 
 static void error_callback(int error, const char* description) {
 	fputs(description, stderr);
@@ -126,7 +74,7 @@ int main(void) {
 
 	glfwMakeContextCurrent(window);
 
-	program_id = simple_program();
+	program_id = shader_create_program(vertex_shader_src, fragment_shader_src);
 
 	glUseProgram(program_id);
 

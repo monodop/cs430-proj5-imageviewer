@@ -118,6 +118,7 @@
   <ItemGroup>
     <ClCompile Include="src\c\color.c" />
     <ClCompile Include="src\c\main.c" />
+    <ClCompile Include="src\c\shaders.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="d3dcompiler_47.dll" />
@@ -133,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\headers\color.h" />
+    <ClInclude Include="src\headers\shaders.h" />
     <ClInclude Include="src\headers\vec.h" />
     <ClInclude Include="src\headers\vertex.h" />
   </ItemGroup>
