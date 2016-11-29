@@ -13,7 +13,7 @@
 
 #define MODE_IMAGE 1
 #define MODE_RAYCAST 2
-#define WORKER_THREADS 8
+#define WORKER_THREADS 7
 
 GLFWwindow* window;
 
@@ -159,6 +159,10 @@ int main(int argc, char* argv[]) {
 	}
 
 	lowpImage = malloc(sizeof(LowpColor) * image.header.imageHeight * image.header.imageWidth);
+	if (lowpImage == NULL) {
+		fprintf(stderr, "Error: Could not allocate enough memory to generate the output image. Render Cancelled...\n");
+		return displayUsage();
+	}
 	image_copy_lowp(&image, lowpImage);
 
 	char windowTitle[1000];
@@ -251,18 +255,18 @@ int main(int argc, char* argv[]) {
 
 		// Horizontal Translation
 		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-			trans[0] -= 0.01f;
+			trans[0] += 0.01f;
 		}
 		else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-			trans[0] += 0.01f;
+			trans[0] -= 0.01f;
 		}
 
 		// Vertical Translation
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-			trans[1] += 0.01f;
+			trans[1] -= 0.01f;
 		}
 		else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-			trans[1] -= 0.01f;
+			trans[1] += 0.01f;
 		}
 
 		// Rotation
