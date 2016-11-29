@@ -2,6 +2,7 @@
 #include "../headers/shaders.h"
 #include "../headers/res_manager.h"
 #include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 GLint shader_create_shader(GLint shader_type, char* shader_src) {

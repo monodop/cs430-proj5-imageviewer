@@ -24,6 +24,16 @@ int image_create(PpmImageRef image, unsigned int width, unsigned int height, Col
     return 1;
 }
 
+void image_copy_lowp(PpmImageRef image, LowpColor* pixelMap) {
+	int i, arrLength = image->header.imageWidth * image->header.imageHeight;
+	for (i = 0; i < arrLength; i++) {
+		pixelMap[i].c[0] = (float)image->pixels[i].r;
+		pixelMap[i].c[1] = (float)image->pixels[i].g;
+		pixelMap[i].c[2] = (float)image->pixels[i].b;
+		pixelMap[i].c[3] = (float)image->pixels[i].a;
+	}
+}
+
 void image_fill(PpmImageRef image, Color backgroundColor) {
 
     int i;

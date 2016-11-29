@@ -40,7 +40,7 @@ int ppm6_read_triple(FILE* filePointer, int maxValue, ColorRef color) {
         fprintf(stderr, INVALID_COLOR_VALUE);
         return 0;
     }
-    color->r = (float)c1 / maxValue;
+    color->r = (double)c1 / maxValue;
 
     // Green
     c1 = getc(filePointer);
@@ -63,7 +63,7 @@ int ppm6_read_triple(FILE* filePointer, int maxValue, ColorRef color) {
         fprintf(stderr, INVALID_COLOR_VALUE);
         return 0;
     }
-    color->g = (float)c1 / maxValue;
+    color->g = (double)c1 / maxValue;
 
     // Blue
     c1 = getc(filePointer);
@@ -86,7 +86,7 @@ int ppm6_read_triple(FILE* filePointer, int maxValue, ColorRef color) {
         fprintf(stderr, INVALID_COLOR_VALUE);
         return 0;
     }
-    color->b = (float)c1 / maxValue;
+    color->b = (double)c1 / maxValue;
 
     return 1;
 }

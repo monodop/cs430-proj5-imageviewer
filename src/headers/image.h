@@ -21,6 +21,10 @@ typedef struct {
 } PpmImage;
 typedef PpmImage* PpmImageRef;
 
+typedef struct {
+	float c[4];
+} LowpColor;
+
 /**
  * Creates a blank image of size width x height and fills it with the provided background color
  * @param image - The place to store the image
@@ -32,5 +36,7 @@ typedef PpmImage* PpmImageRef;
 int image_create(PpmImageRef image, unsigned int width, unsigned int height, Color backgroundColor);
 
 void image_fill(PpmImageRef image, Color backgroundColor);
+
+void image_copy_lowp(PpmImageRef image, LowpColor* pixelMap);
 
 #endif //CS430_PROJ1_IMAGES_IMAGE_H

@@ -7,9 +7,9 @@
 
 typedef union {
 	struct {
-		float r, g, b, a;
+		double r, g, b, a;
 	};
-	float f[4];
+	double f[4];
 } Color;
 typedef Color* ColorRef;
 

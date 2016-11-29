@@ -11,9 +11,9 @@
 
 typedef union {
 	struct {
-		float x, y, z;
+		double x, y, z;
 	};
-	float f[3];
+	double f[3];
 } Vector;
 
 typedef Vector* VectorRef;
@@ -24,12 +24,12 @@ typedef struct {
 } Ray;
 typedef Ray* RayRef;
 
-static inline float deg2rad(float deg) {
-    return (float)(deg * (PI / 180.0));
+static inline double deg2rad(double deg) {
+    return (double)(deg * (PI / 180.0));
 }
 
-static inline float vec_mag(Vector a) {
-    return (float)sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
+static inline double vec_mag(Vector a) {
+    return (double)sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
 }
 
 static inline Vector vec_add(Vector a, Vector b) {
@@ -48,7 +48,7 @@ static inline Vector vec_sub(Vector a, Vector b) {
     };
 }
 
-static inline Vector vec_scale(Vector a, float scale) {
+static inline Vector vec_scale(Vector a, double scale) {
     return (Vector) {
             .x = a.x * scale,
             .y = a.y * scale,
@@ -57,21 +57,21 @@ static inline Vector vec_scale(Vector a, float scale) {
 }
 
 static inline Vector vec_unit(Vector a) {
-    float mag = vec_mag(a);
+    double mag = vec_mag(a);
 
     // prevent division by zero
     if (mag == 0)
         return (Vector){.x=0,.y=0,.z=0};
 
-    return vec_scale(a, 1.0 / mag);
+    return vec_scale(a, 1.0f / mag);
 }
 
-static inline float vec_dot(Vector a, Vector b) {
+static inline double vec_dot(Vector a, Vector b) {
     return a.x*b.x + a.y*b.y + a.z*b.z;
 }
 
-static inline float vec_angle(Vector a, Vector b) {
-    return acos(vec_dot(a, b));
+static inline double vec_angle(Vector a, Vector b) {
+    return acosf(vec_dot(a, b));
 }
 
 static inline Vector vec_project(Vector a, Vector b) {
@@ -98,21 +98,21 @@ static inline Vector vec_rot(Vector point, Vector angle) {
     };
 
     v1 = (Vector) {
-            .x = (float)(point.x * cos(degAngle.z) - point.y * sin(degAngle.z)),
-            .y = (float)(point.x * sin(degAngle.z) + point.y * cos(degAngle.z)),
-            .z = (float)(point.z)
+            .x = (double)(point.x * cos(degAngle.z) - point.y * sin(degAngle.z)),
+            .y = (double)(point.x * sin(degAngle.z) + point.y * cos(degAngle.z)),
+            .z = (double)(point.z)
     };
 
     v2 = (Vector) {
-            .z = (float)(v1.z * cos(degAngle.y) - v1.x * sin(degAngle.y)),
-            .x = (float)(v1.z * sin(degAngle.y) + v1.x * cos(degAngle.y)),
-            .y = (float)(v1.y)
+            .z = (double)(v1.z * cos(degAngle.y) - v1.x * sin(degAngle.y)),
+            .x = (double)(v1.z * sin(degAngle.y) + v1.x * cos(degAngle.y)),
+            .y = (double)(v1.y)
     };
 
     v3 = (Vector) {
-            .y = (float)(v2.y * cos(degAngle.x) - v2.z * sin(degAngle.x)),
-            .z = (float)(v2.y * sin(degAngle.x) + v2.z * cos(degAngle.x)),
-            .x = (float)(v2.x)
+            .y = (double)(v2.y * cos(degAngle.x) - v2.z * sin(degAngle.x)),
+            .z = (double)(v2.y * sin(degAngle.x) + v2.z * cos(degAngle.x)),
+            .x = (double)(v2.x)
     };
 
     return v3;
@@ -120,7 +120,7 @@ static inline Vector vec_rot(Vector point, Vector angle) {
 }
 
 static inline Vector vec_reflect(Vector vec, Vector axis) {
-    float scale = 2 * vec_dot(axis, vec);
+    double scale = 2 * vec_dot(axis, vec);
     return vec_unit(vec_sub(vec, vec_scale(axis, scale)));
 }
 
