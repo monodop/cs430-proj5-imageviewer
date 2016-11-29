@@ -28,7 +28,7 @@ int main(void) {
 
 	char windowTitle[100];
 
-	GLint program_id, position_slot, color_slot, trans_slot;
+	GLint program_id, position_slot, color_slot, trans_slot, rot_slot;
 	GLuint vertex_buffer;
 	GLuint index_buffer;
 
@@ -66,6 +66,7 @@ int main(void) {
 	position_slot = glGetAttribLocation(program_id, "Position");
 	color_slot = glGetAttribLocation(program_id, "SourceColor");
 	trans_slot = glGetUniformLocation(program_id, "Translation");
+	rot_slot = glGetUniformLocation(program_id, "Rotation");
 	glEnableVertexAttribArray(position_slot);
 	glEnableVertexAttribArray(color_slot);
 
@@ -107,10 +108,11 @@ int main(void) {
 			trans[1] -= 0.01;
 		}
 
-		sprintf_s(windowTitle, 100, "Image Viewer - (%.1f)", rotation);
+		sprintf_s(windowTitle, 100, "Image Viewer - (%.2f)", rotation);
 		glfwSetWindowTitle(window, windowTitle);
 
 		glUniform2f(trans_slot, trans[0], trans[1]);
+		glUniform1f(rot_slot, rotation);
 
 		glClearColor(0, 104.0 / 255.0, 55.0 / 255.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT);
