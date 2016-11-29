@@ -303,6 +303,14 @@ int main(int argc, char* argv[]) {
 		if (mode == MODE_RAYCAST && !completed) {
 			if (requiresNewFrame) {
 
+				if (i > 1) {
+					// Write image to file 
+					if (!ppm_write(frameFilename, &image)) {
+						fprintf(stderr, "Error: Unable to write the output file. Render cancelled.\n");
+						return displayUsage();
+					}
+				}
+
 				if (i > frameCount) {
 					// Terminate worker threads
 					if (!raycast_terminate_workers(workers, WORKER_THREADS)) {

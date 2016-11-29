@@ -83,7 +83,7 @@ int ppm_write(char* filename, PpmImageRef image) {
 
     // Open / Clear output file
     printf("Opening output file for writing.\n");
-    filePointer = fopen(filename, "w+");
+    filePointer = fopen(filename, "wb+");
     if (filePointer == NULL) {
         fprintf(stderr, "Error: File '%s' cannot be opened for writing. Error number %d.\n", filename, errno);
         return 0;
