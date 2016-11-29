@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <Windows.h>
+#include <math.h>
 
 #include "../headers/vertex.h"
 #include "../headers/shaders.h"
@@ -153,54 +153,6 @@ int main(int argc, char* argv[]) {
 			return displayUsage();
 		}
 		printf("Ray casting workers allocated.\n");
-
-		// Begin render loop
-		for (i = 1; i <= frameCount; i++) {
-
-			printf("Rendering frame %d of %d.\n", i, frameCount);
-
-			// Calculate filename for frame
-			if (scene.camera->data.camera.animated) {
-				sprintf(frameFilename + dotIndex + 1, "%0*d", padding, i);
-				frameFilename[dotIndex + padding + 1] = '.';
-			}
-
-			// Prep frame
-			double t = scene.camera->data.camera.startTime + (i - 1) * (scene.camera->data.camera.endTime - scene.camera->data.camera.startTime) / (frameCount - 1);
-			if (!isnormal(t))
-				t = 0;
-			if (!scene_prep_frame(&scene, t)) {
-				fprintf(stderr, "Error: Unable to prepare the frame. Render cancelled.\n");
-				return displayUsage();
-			}
-
-			// Clear image buffer
-			image_fill(&image, (Color) { .r = 0, .g = 0, .b = 0 });
-
-			// Perform raycasting
-			long workload = raycast_image(workers, &image, &scene, WORKER_THREADS);
-
-			double progress;
-			do {
-				progress = raycast_get_progress(workers, WORKER_THREADS, workload);
-				printf("Casted %lf%%..\n", progress * 100);
-				Sleep(100);
-			} while (isfinite(progress));
-			
-
-			// Write image to file
-			if (!ppm_write(frameFilename, &image)) {
-				fprintf(stderr, "Error: Unable to write the output file. Render cancelled.\n");
-				return displayUsage();
-			}
-		}
-
-		// Terminate worker threads
-		if (!raycast_terminate_workers(workers, WORKER_THREADS)) {
-			fprintf(stderr, "Error: Could not terminate worker threads. Render cancelled.\n");
-			return displayUsage();
-		}
-		printf("Ray casting workers terminated.\n");
 	}
 	else {
 		return displayUsage();
@@ -282,6 +234,13 @@ int main(int argc, char* argv[]) {
 	float shear[2] = { 0, 0 };
 	float rotation = 0;
 
+	bool requiresNewFrame = true;
+	bool completed = false;
+	int currentFrame = 1;
+	long workload;
+	double t, progress;
+	i = 1;
+
 	// Repeat
 	while (!glfwWindowShouldClose(window)) {
 
@@ -339,6 +298,56 @@ int main(int argc, char* argv[]) {
 		}
 		else if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
 			shear[1] += 0.01f;
+		}
+
+		if (mode == MODE_RAYCAST && !completed) {
+			if (requiresNewFrame) {
+
+				if (i > frameCount) {
+					// Terminate worker threads
+					if (!raycast_terminate_workers(workers, WORKER_THREADS)) {
+						fprintf(stderr, "Error: Could not terminate worker threads. Render cancelled.\n");
+						return displayUsage();
+					}
+					printf("Ray casting workers terminated.\n");
+					requiresNewFrame = false;
+					completed = true;
+				}
+				else {
+					printf("Rendering frame %d of %d.\n", i, frameCount);
+
+					// Calculate filename for frame
+					if (scene.camera->data.camera.animated) {
+						sprintf(frameFilename + dotIndex + 1, "%0*d", padding, i);
+						frameFilename[dotIndex + padding + 1] = '.';
+					}
+
+					// Prep frame
+					t = scene.camera->data.camera.startTime + (i - 1) * (scene.camera->data.camera.endTime - scene.camera->data.camera.startTime) / (frameCount - 1);
+					if (!isnormal(t))
+						t = 0;
+					if (!scene_prep_frame(&scene, t)) {
+						fprintf(stderr, "Error: Unable to prepare the frame. Render cancelled.\n");
+						return displayUsage();
+					}
+
+					// Clear image buffer
+					image_fill(&image, (Color) { .r = 0, .g = 0, .b = 0 });
+
+					// Perform raycasting
+					workload = raycast_image(workers, &image, &scene, WORKER_THREADS);
+					requiresNewFrame = false;
+				}
+			}
+			else {
+				progress = raycast_get_progress(workers, WORKER_THREADS, workload);
+				if (!isfinite(progress)) {
+					i++;
+					requiresNewFrame = true;
+				}
+				image_copy_lowp(&image, lowpImage);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.header.imageWidth, image.header.imageHeight, 0, GL_RGBA, GL_FLOAT, lowpImage);
+			}
 		}
 
 		sprintf_s(windowTitle, 1000, "Image Viewer - %s", imageFilename);

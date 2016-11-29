@@ -71,7 +71,7 @@ static inline double vec_dot(Vector a, Vector b) {
 }
 
 static inline double vec_angle(Vector a, Vector b) {
-    return acosf(vec_dot(a, b));
+    return acos(vec_dot(a, b));
 }
 
 static inline Vector vec_project(Vector a, Vector b) {
