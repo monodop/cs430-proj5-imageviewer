@@ -241,6 +241,11 @@ int main(int argc, char* argv[]) {
 	double t, progress;
 	i = 1;
 
+	double realAspect = (double)image.header.imageWidth / (double)image.header.imageHeight;
+	double windowAspect;
+
+	int windowHeight, windowWidth, scaledHeight, scaledWidth;
+
 	// Repeat
 	while (!glfwWindowShouldClose(window)) {
 
@@ -285,18 +290,18 @@ int main(int argc, char* argv[]) {
 		}
 
 		// Horizontal Shear
-		if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+		if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
 			shear[0] += 0.01f;
 		}
-		else if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
+		else if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
 			shear[0] -= 0.01f;
 		}
 
 		// Vertical Shear
-		if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
+		if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
 			shear[1] -= 0.01f;
 		}
-		else if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
+		else if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
 			shear[1] += 0.01f;
 		}
 
@@ -361,15 +366,25 @@ int main(int argc, char* argv[]) {
 		sprintf_s(windowTitle, 1000, "Image Viewer - %s", imageFilename);
 		glfwSetWindowTitle(window, windowTitle);
 
+		glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
+		glViewport(0, 0, windowWidth, windowHeight);
+		windowAspect = (double)windowWidth / (double)windowHeight;
+		if (windowAspect > realAspect) {
+			scaledWidth = windowHeight / realAspect;
+			scaledHeight = windowHeight;
+		}
+		else {
+			scaledHeight = windowWidth / realAspect;
+			scaledWidth = windowWidth;
+		}
+
 		glUniform2f(trans_slot, trans[0], trans[1]);
-		glUniform2f(scale_slot, scale[0], scale[1]);
+		glUniform2f(scale_slot, scale[0] * ((float)scaledWidth / (float)windowWidth), scale[1] * ((float)scaledHeight / (float)windowHeight));
 		glUniform2f(shear_slot, shear[0], shear[1]);
 		glUniform1f(rot_slot, rotation);
 
 		glClearColor(0, 0, 0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		glViewport(0, 0, image.header.imageWidth, image.header.imageHeight);
 
 		glVertexAttribPointer(position_slot,
 			3,

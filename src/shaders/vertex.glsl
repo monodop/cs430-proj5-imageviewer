@@ -32,5 +32,5 @@ mat4 ShearMatrix = mat4(1.0, Shear.x, 0.0, 0.0,
 void main(void) {
     DestinationColor = SourceColor;
     DestinationTextureCoordinate = SourceTextureCoordinate;
-    gl_Position = Position*ScaleMatrix*ShearMatrix*RotationMatrix*TranslationMatrix;
+    gl_Position = Position*ShearMatrix*RotationMatrix*ScaleMatrix*TranslationMatrix;
 }
