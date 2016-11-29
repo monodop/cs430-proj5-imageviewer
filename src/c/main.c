@@ -26,7 +26,9 @@ static void error_callback(int error, const char* description) {
 
 int main(void) {
 
-	GLint program_id, position_slot, color_slot;
+	char windowTitle[100];
+
+	GLint program_id, position_slot, color_slot, trans_slot;
 	GLuint vertex_buffer;
 	GLuint index_buffer;
 
@@ -45,7 +47,7 @@ int main(void) {
 	// Create and open a window
 	window = glfwCreateWindow(640,
 		480,
-		"Hello World",
+		"Image Viewer",
 		NULL,
 		NULL);
 
@@ -63,6 +65,7 @@ int main(void) {
 
 	position_slot = glGetAttribLocation(program_id, "Position");
 	color_slot = glGetAttribLocation(program_id, "SourceColor");
+	trans_slot = glGetUniformLocation(program_id, "Translation");
 	glEnableVertexAttribArray(position_slot);
 	glEnableVertexAttribArray(color_slot);
 
@@ -79,8 +82,35 @@ int main(void) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
 
+	// Setup manipulation variables
+	float trans[2] = { 0, 0 };
+	float scale[2] = { 1, 1 };
+	float shear[2] = { 0, 0 };
+	float rotation = 0;
+
 	// Repeat
 	while (!glfwWindowShouldClose(window)) {
+
+		// Horizontal Translation
+		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+			trans[0] -= 0.01;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+			trans[0] += 0.01;
+		}
+
+		// Vertical Translation
+		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+			trans[1] += 0.01;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+			trans[1] -= 0.01;
+		}
+
+		sprintf_s(windowTitle, 100, "Image Viewer - (%.1f)", rotation);
+		glfwSetWindowTitle(window, windowTitle);
+
+		glUniform2f(trans_slot, trans[0], trans[1]);
 
 		glClearColor(0, 104.0 / 255.0, 55.0 / 255.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT);

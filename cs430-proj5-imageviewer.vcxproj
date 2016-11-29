@@ -80,6 +80,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>glfw3.lib;glfw3dll.lib;libEGL.lib;libGLESv2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
