@@ -28,7 +28,7 @@ int main(void) {
 
 	char windowTitle[100];
 
-	GLint program_id, position_slot, color_slot, trans_slot, rot_slot;
+	GLint program_id, position_slot, color_slot, trans_slot, rot_slot, scale_slot;
 	GLuint vertex_buffer;
 	GLuint index_buffer;
 
@@ -67,6 +67,7 @@ int main(void) {
 	color_slot = glGetAttribLocation(program_id, "SourceColor");
 	trans_slot = glGetUniformLocation(program_id, "Translation");
 	rot_slot = glGetUniformLocation(program_id, "Rotation");
+	scale_slot = glGetUniformLocation(program_id, "Scale");
 	glEnableVertexAttribArray(position_slot);
 	glEnableVertexAttribArray(color_slot);
 
@@ -108,10 +109,35 @@ int main(void) {
 			trans[1] -= 0.01;
 		}
 
-		sprintf_s(windowTitle, 100, "Image Viewer - (%.2f)", rotation);
+		// Rotation
+		if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+			rotation += 0.01;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+			rotation -= 0.01;
+		}
+
+		// Horizontal Translation
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+			scale[0] *= 1.005;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+			scale[0] /= 1.005;
+		}
+
+		// Vertical Translation
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+			scale[1] *= 1.005;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+			scale[1] /= 1.005;
+		}
+
+		sprintf_s(windowTitle, 100, "Image Viewer - (%.2f, %.2f)", scale[0], scale[1]);
 		glfwSetWindowTitle(window, windowTitle);
 
 		glUniform2f(trans_slot, trans[0], trans[1]);
+		glUniform2f(scale_slot, scale[0], scale[1]);
 		glUniform1f(rot_slot, rotation);
 
 		glClearColor(0, 104.0 / 255.0, 55.0 / 255.0, 1.0);
