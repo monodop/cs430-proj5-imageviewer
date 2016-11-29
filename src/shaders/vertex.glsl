@@ -2,6 +2,7 @@ attribute vec4 Position;
 attribute vec4 SourceColor;
 uniform vec2 Translation;
 uniform vec2 Scale;
+uniform vec2 Shear;
 uniform float Rotation;
 
 varying vec4 DestinationColor;
@@ -21,7 +22,12 @@ mat4 ScaleMatrix = mat4(Scale.x, 0.0, 0.0, 0.0,
 	                    0.0, 0.0, 1.0, 0.0,
 	                    0.0, 0.0, 0.0, 1.0);
 
+mat4 ShearMatrix = mat4(1.0, Shear.x, 0.0, 0.0,
+	                    Shear.y, 1.0, 0.0, 0.0,
+	                    0.0, 0.0, 1.0, 0.0,
+	                    0.0, 0.0, 0.0, 1.0);
+
 void main(void) {
     DestinationColor = SourceColor;
-    gl_Position = Position*ScaleMatrix*RotationMatrix*TranslationMatrix;
+    gl_Position = Position*ScaleMatrix*ShearMatrix*RotationMatrix*TranslationMatrix;
 }
