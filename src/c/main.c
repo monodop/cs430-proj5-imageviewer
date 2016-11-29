@@ -379,7 +379,7 @@ int main(int argc, char* argv[]) {
 		}
 
 		glUniform2f(trans_slot, trans[0], trans[1]);
-		glUniform2f(scale_slot, scale[0] * ((float)scaledWidth / (float)windowWidth), scale[1] * ((float)scaledHeight / (float)windowHeight));
+		glUniform2f(scale_slot, scale[0] * ((float)scaledWidth / (float)windowWidth) * (image.header.imageWidth / (float)scaledWidth), scale[1] * ((float)scaledHeight / (float)windowHeight) * ((float)image.header.imageHeight / (float)scaledHeight));
 		glUniform2f(shear_slot, shear[0], shear[1]);
 		glUniform1f(rot_slot, rotation);
 
