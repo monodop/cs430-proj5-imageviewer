@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <Windows.h>
 
 #include "../headers/vertex.h"
 #include "../headers/shaders.h"
@@ -177,10 +178,15 @@ int main(int argc, char* argv[]) {
 			image_fill(&image, (Color) { .r = 0, .g = 0, .b = 0 });
 
 			// Perform raycasting
-			if (!raycast_image(workers, &image, &scene, WORKER_THREADS)) {
-				fprintf(stderr, "Error: Unable to raycast the image. Render cancelled.\n");
-				return displayUsage();
-			}
+			long workload = raycast_image(workers, &image, &scene, WORKER_THREADS);
+
+			double progress;
+			do {
+				progress = raycast_get_progress(workers, WORKER_THREADS, workload);
+				printf("Casted %lf%%..\n", progress * 100);
+				Sleep(100);
+			} while (isfinite(progress));
+			
 
 			// Write image to file
 			if (!ppm_write(frameFilename, &image)) {

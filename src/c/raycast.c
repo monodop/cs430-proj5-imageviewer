@@ -15,7 +15,7 @@
 
 /**
  * Tests for a sphere intersection against a ray. Passes the hit position and distance to hitOut and distanceOut.
- * If no hit was detected, then distanceOut will be INIFINITY
+ * If no hit was detected, then distanceOut will be INFINITY
  * @param ray - The ray to test
  * @param sphere_center - The center of the sphere
  * @param sphere_radius - The radius of the sphere
@@ -471,9 +471,9 @@ int raycast_create_workers(Worker* workers, PpmImageRef image, SceneRef scene, i
         worker->args.image = image;
         worker->args.scene = scene;
         worker->args.startIndex = w * workload;
-        worker->args.endIndex = worker->args.startIndex + workload;
+        worker->args.endIndex = worker->args.startIndex + workload+1;
         if (worker->args.endIndex > total_workload)
-            worker->args.endIndex = total_workload;
+            worker->args.endIndex = total_workload+1;
         pthread_create(&(worker->thread_handle), NULL, raycast_worker, worker);
     }
 
@@ -502,7 +502,7 @@ int raycast_terminate_workers(Worker* workers, int threadCount) {
     return 1;
 }
 
-int raycast_image(Worker* workers, PpmImageRef image, SceneRef scene, int threadCount) {
+long raycast_image(Worker* workers, PpmImageRef image, SceneRef scene, int threadCount) {
 
     printf("Beginning ray casting.\n");
     Worker* worker;
@@ -520,27 +520,25 @@ int raycast_image(Worker* workers, PpmImageRef image, SceneRef scene, int thread
         pthread_mutex_unlock(&(worker->signalLock));
     }
 
-    // Wait for all workers to complete
-    int workers_remaining = threadCount;
-    long progress;
-    while (workers_remaining > 0) {
-        progress = 0;
-        for (w = 0; w < threadCount; w++) {
-            worker = workers + w;
-            progress += worker->progress;
-            if (worker->signal == WORKER_ACKNOWLEDGED && worker->completed) {
-                // Join completed worker thread
-                worker->signal = WORKER_COMPLETED;
-                workers_remaining--;
-            }
-        }
-        printf("%d%% rays casted\n", (int)((progress * 100)/total_workload));
-        //usleep(100 * 1000);
-		Sleep(100);
-    }
+	return total_workload;
+}
 
-    printf("100%% rays casted\n");
-    printf("Ray casting completed.\n");
+double raycast_get_progress(Worker* workers, int threadCount, long totalWorkload) {
+	long progress = 0;
+	int w;
+	Worker* worker;
 
-    return 1;
+	for (w = 0; w < threadCount; w++) {
+		worker = workers + w;
+		progress += worker->progress;
+		if (worker->signal == WORKER_ACKNOWLEDGED && worker->completed) {
+			// signal completed worker thread
+			worker->signal = WORKER_COMPLETED;
+		}
+	}
+
+	if (progress == totalWorkload)
+		return INFINITY;
+
+	return (double)progress / (double)totalWorkload;
 }

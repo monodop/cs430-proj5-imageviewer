@@ -64,7 +64,7 @@ int raycast_terminate_workers(Worker* workers, int threadCount);
  * @param threadCount - The total number of threads in the pool
  * @return 1 if successful, 0 if failure
  */
-int raycast_image(Worker* workers, PpmImageRef image, SceneRef scene, int threadCount);
+long raycast_image(Worker* workers, PpmImageRef image, SceneRef scene, int threadCount);
 
 /**
  * Shoots a ray at the scene, maxing out at maxDistance. Passes a vector hit position and SceneObjectRef object
@@ -76,5 +76,7 @@ int raycast_image(Worker* workers, PpmImageRef image, SceneRef scene, int thread
  * @return 1 if success, 0 if failure
  */
 int raycast_shoot(Ray ray, SceneRef scene, double maxDistance, ColorRef colorOut, int maxBounces, DblListRef iorList);
+
+double raycast_get_progress(Worker* workers, int threadCount, long totalWorkload);
 
 #endif //CS430_PROJ2_RAYCASTER_RAYCASTER_H
