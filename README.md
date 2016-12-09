@@ -19,6 +19,7 @@ To build the project, just open the Visual Studio project and select the configu
 
 ## Usage
 There are two usages for ezview. Once an image has been loaded, you can use the following controls to manipulate the image:
+
 1. Q/E to rotate
 2. arrow keys to translate
 3. WASD to scale
